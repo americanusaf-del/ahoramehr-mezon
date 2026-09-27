@@ -13,7 +13,7 @@ body{
   font-family:Tahoma,Arial,sans-serif;
   min-height:100vh;
   display:grid;
-  place-items:center
+  place-items:center;
 }
 
 .box{
@@ -23,27 +23,54 @@ body{
   background:#090000;
   border:1px solid #661111;
   border-radius:16px;
-  box-shadow:0 0 35px #300
+  box-shadow:0 0 35px #300;
+}
+
+.start-screen{
+  width:min(90%,500px);
+  padding:45px 20px;
+  text-align:center;
+  background:#090000;
+  border:1px solid #661111;
+  border-radius:16px;
+  box-shadow:0 0 35px #300;
+}
+
+.start-icon{
+  font-size:75px;
+}
+
+.start-button{
+  margin-top:25px;
+  padding:16px 45px;
+  border:0;
+  border-radius:12px;
+  background:#d71919;
+  color:white;
+  font-weight:bold;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 0 20px #900;
 }
 
 .icon{
-  font-size:70px
+  font-size:70px;
 }
 
 h1{
   font-size:clamp(30px,8vw,55px);
-  text-shadow:0 0 18px red
+  text-shadow:0 0 18px red;
 }
 
 p{
   font-size:20px;
   line-height:2;
-  color:#ddd
+  color:#ddd;
 }
 
 .warning{
   font-size:20px;
-  line-height:2
+  line-height:2;
 }
 
 .hacker-image{
@@ -53,7 +80,7 @@ p{
   box-shadow:0 0 25px #900;
   display:block;
   margin-left:auto;
-  margin-right:auto
+  margin-right:auto;
 }
 
 .terminal{
@@ -65,16 +92,16 @@ p{
   padding:16px;
   color:#ff5555;
   font:14px/1.8 Consolas,monospace;
-  min-height:130px
+  min-height:130px;
 }
 
+#warning,
 #reveal{
   display:none;
-  color:white
 }
 
 .green{
-  color:#5cff8d
+  color:#5cff8d;
 }
 
 button{
@@ -83,93 +110,192 @@ button{
   border-radius:9px;
   background:#25c96b;
   font-weight:bold;
-  font-size:17px
+  font-size:17px;
 }
 </style>
 </head>
 
 <body>
 
-<section class="box" id="warning">
+<!-- صفحه شروع -->
+<section class="start-screen" id="startScreen">
 
-<div class="icon">⚠️</div>
+  <div class="start-icon">🔊</div>
 
-<h1>هشدار امنیتی</h1>
+  <h1 style="font-size:38px;">
+    آماده‌ای؟
+  </h1>
 
-<div class="warning">
-اتصال مشکوک شناسایی شد.<br>
-<b>شما در حال هک شدن هستید!</b>
-</div>
+  <p>
+    برای ورود به صفحه<br>
+    روی دکمه زیر بزن
+  </p>
 
-<img
-  src="IMG_6434.jpeg"
-  alt="Hacker"
-  class="hacker-image"
->
-
-<div class="terminal" id="terminal"></div>
+  <button class="start-button" onclick="startPrank()">
+    ▶️ شروع
+  </button>
 
 </section>
 
 
+<!-- صفحه هشدار -->
+<section class="box" id="warning">
+
+  <div class="icon">⚠️</div>
+
+  <h1>هشدار امنیتی</h1>
+
+  <div class="warning">
+    اتصال مشکوک شناسایی شد.<br>
+    <b>شما در حال هک شدن هستید!</b>
+  </div>
+
+  <img
+    src="IMG_6434.jpeg"
+    alt="Hacker"
+    class="hacker-image"
+  >
+
+  <div class="terminal" id="terminal"></div>
+
+</section>
+
+
+<!-- صفحه آخر -->
 <section class="box" id="reveal">
 
-<div class="icon">😂</div>
+  <div class="icon">😂</div>
 
-<h2 class="green">شوخی کردم!</h2>
+  <h2 class="green">شوخی کردم!</h2>
 
-<p>
-هیچ هکی انجام نشده و هیچ اطلاعاتی از دستگاه شما گرفته نشده.<br>
-فقط یک صفحه‌ی شوخی بود 😄
-</p>
+  <p>
+    هیچ هکی انجام نشده و هیچ اطلاعاتی از دستگاه شما گرفته نشده.<br>
+    فقط یک صفحه‌ی شوخی بود 😄
+  </p>
 
-<button onclick="location.reload()">
-دوباره ببین
-</button>
+  <button onclick="location.reload()">
+    دوباره ببین
+  </button>
 
 </section>
 
 
 <script>
 
+let audioContext;
+
+function beep(){
+
+  audioContext = new (
+    window.AudioContext ||
+    window.webkitAudioContext
+  )();
+
+  function makeBeep(start, duration, frequency){
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gain =
+      audioContext.createGain();
+
+    oscillator.type = "square";
+
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(
+      0.0001,
+      audioContext.currentTime + start
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.35,
+      audioContext.currentTime + start + 0.02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + start + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start(
+      audioContext.currentTime + start
+    );
+
+    oscillator.stop(
+      audioContext.currentTime + start + duration
+    );
+  }
+
+  makeBeep(0,0.35,900);
+  makeBeep(0.55,0.35,900);
+  makeBeep(1.1,0.35,900);
+  makeBeep(1.65,0.6,1100);
+}
+
+
+function startPrank(){
+
+  beep();
+
+  document.getElementById(
+    "startScreen"
+  ).style.display="none";
+
+  document.getElementById(
+    "warning"
+  ).style.display="block";
+
+  next();
+}
+
+
 const lines=[
-"[SYSTEM] scanning connection...",
-"[WARN] unusual activity detected",
-"[SCAN] checking device...",
-"[SCAN] checking network...",
-"[ALERT] suspicious activity found",
-"[SYSTEM] displaying security warning..."
+  "[SYSTEM] scanning connection...",
+  "[WARN] unusual activity detected",
+  "[SCAN] checking device...",
+  "[SCAN] checking network...",
+  "[ALERT] suspicious activity found",
+  "[SYSTEM] displaying security warning..."
 ];
 
 let i=0;
 
+
 function next(){
 
- const box=document.getElementById("terminal");
+  const box =
+    document.getElementById("terminal");
 
- if(i<lines.length){
+  if(i < lines.length){
 
-   box.innerHTML+=lines[i]+"<br>";
+    box.innerHTML +=
+      lines[i] + "<br>";
 
-   i++;
+    i++;
 
-   setTimeout(next,550);
+    setTimeout(next,550);
 
- }else{
+  }else{
 
-   setTimeout(()=>{
+    setTimeout(()=>{
 
-     document.getElementById("warning").style.display="none";
+      document.getElementById(
+        "warning"
+      ).style.display="none";
 
-     document.getElementById("reveal").style.display="block";
+      document.getElementById(
+        "reveal"
+      ).style.display="block";
 
-   },1800);
+    },1800);
 
- }
+  }
 
 }
-
-next();
 
 </script>
 
