@@ -36,10 +36,6 @@ body{
   box-shadow:0 0 35px #300;
 }
 
-.start-icon{
-  font-size:75px;
-}
-
 .start-button{
   margin-top:25px;
   padding:16px 45px;
@@ -117,18 +113,15 @@ button{
 
 <body>
 
-<!-- صفحه شروع -->
 <section class="start-screen" id="startScreen">
 
-  <div class="start-icon">🔊</div>
-
-  <h1 style="font-size:38px;">
+  <h1 style="font-size:34px;">
     آماده‌ای؟
   </h1>
 
   <p>
-    برای ورود به صفحه<br>
-    روی دکمه زیر بزن
+    برای دیدن مزون لباس اهورامهر<br>
+    روی دکمه شروع بزن
   </p>
 
   <button class="start-button" onclick="startPrank()">
@@ -138,7 +131,6 @@ button{
 </section>
 
 
-<!-- صفحه هشدار -->
 <section class="box" id="warning">
 
   <div class="icon">⚠️</div>
@@ -161,7 +153,6 @@ button{
 </section>
 
 
-<!-- صفحه آخر -->
 <section class="box" id="reveal">
 
   <div class="icon">😂</div>
@@ -183,63 +174,89 @@ button{
 <script>
 
 let audioContext;
+let alarmOscillator;
+let alarmGain;
 
-function beep(){
+
+/* بوق هشدار ممتد */
+function startAlarm(){
 
   audioContext = new (
     window.AudioContext ||
     window.webkitAudioContext
   )();
 
-  function makeBeep(start, duration, frequency){
+  alarmOscillator =
+    audioContext.createOscillator();
 
-    const oscillator =
-      audioContext.createOscillator();
+  alarmGain =
+    audioContext.createGain();
 
-    const gain =
-      audioContext.createGain();
+  alarmOscillator.type = "sawtooth";
+  alarmOscillator.frequency.value = 700;
 
-    oscillator.type = "square";
+  alarmGain.gain.setValueAtTime(
+    0.0001,
+    audioContext.currentTime
+  );
 
-    oscillator.frequency.value = frequency;
+  alarmGain.gain.exponentialRampToValueAtTime(
+    0.25,
+    audioContext.currentTime + 0.08
+  );
 
-    gain.gain.setValueAtTime(
-      0.0001,
-      audioContext.currentTime + start
+  alarmOscillator.connect(alarmGain);
+  alarmGain.connect(audioContext.destination);
+
+  alarmOscillator.start();
+
+  /* تغییر زیر و بم صدا برای حالت هشدار */
+  let high = false;
+
+  const siren = setInterval(() => {
+
+    if(!alarmOscillator) return;
+
+    high = !high;
+
+    alarmOscillator.frequency.setValueAtTime(
+      high ? 950 : 650,
+      audioContext.currentTime
     );
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.35,
-      audioContext.currentTime + start + 0.02
-    );
+  }, 700);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      audioContext.currentTime + start + duration
-    );
+  /* توقف خودکار بعد از 6 ثانیه */
+  setTimeout(() => {
 
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
+    clearInterval(siren);
 
-    oscillator.start(
-      audioContext.currentTime + start
-    );
+    if(alarmGain){
 
-    oscillator.stop(
-      audioContext.currentTime + start + duration
-    );
-  }
+      alarmGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + 0.3
+      );
 
-  makeBeep(0,0.35,900);
-  makeBeep(0.55,0.35,900);
-  makeBeep(1.1,0.35,900);
-  makeBeep(1.65,0.6,1100);
+    }
+
+    if(alarmOscillator){
+
+      alarmOscillator.stop(
+        audioContext.currentTime + 0.35
+      );
+
+    }
+
+    alarmOscillator = null;
+
+  }, 6000);
 }
 
 
 function startPrank(){
 
-  beep();
+  startAlarm();
 
   document.getElementById(
     "startScreen"
