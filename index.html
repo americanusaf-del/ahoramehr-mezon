@@ -91,22 +91,8 @@ p{
   min-height:130px;
 }
 
-#warning,
-#reveal{
+#warning{
   display:none;
-}
-
-.green{
-  color:#5cff8d;
-}
-
-button{
-  padding:12px 22px;
-  border:0;
-  border-radius:9px;
-  background:#25c96b;
-  font-weight:bold;
-  font-size:17px;
 }
 </style>
 </head>
@@ -153,32 +139,12 @@ button{
 </section>
 
 
-<section class="box" id="reveal">
-
-  <div class="icon">😂</div>
-
-  <h2 class="green">شوخی کردم!</h2>
-
-  <p>
-    هیچ هکی انجام نشده و هیچ اطلاعاتی از دستگاه شما گرفته نشده.<br>
-    فقط یک صفحه‌ی شوخی بود 😄
-  </p>
-
-  <button onclick="location.reload()">
-    دوباره ببین
-  </button>
-
-</section>
-
-
 <script>
 
 let audioContext;
 let alarmOscillator;
 let alarmGain;
 
-
-/* بوق هشدار ممتد */
 function startAlarm(){
 
   audioContext = new (
@@ -210,7 +176,6 @@ function startAlarm(){
 
   alarmOscillator.start();
 
-  /* تغییر زیر و بم صدا برای حالت هشدار */
   let high = false;
 
   const siren = setInterval(() => {
@@ -226,7 +191,6 @@ function startAlarm(){
 
   }, 700);
 
-  /* توقف خودکار بعد از 6 ثانیه */
   setTimeout(() => {
 
     clearInterval(siren);
@@ -281,7 +245,6 @@ const lines=[
 
 let i=0;
 
-
 function next(){
 
   const box =
@@ -295,20 +258,6 @@ function next(){
     i++;
 
     setTimeout(next,550);
-
-  }else{
-
-    setTimeout(()=>{
-
-      document.getElementById(
-        "warning"
-      ).style.display="none";
-
-      document.getElementById(
-        "reveal"
-      ).style.display="block";
-
-    },1800);
 
   }
 
