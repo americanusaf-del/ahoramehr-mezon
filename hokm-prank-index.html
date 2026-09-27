@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Alert</title>
+<style>
+body{margin:0;background:#050505;color:#ff3333;font-family:Tahoma,Arial,sans-serif;min-height:100vh;display:grid;place-items:center}
+.box{width:min(90%,680px);padding:32px 22px;text-align:center;background:#090000;border:1px solid #661111;border-radius:16px;box-shadow:0 0 35px #300}
+.icon{font-size:70px} h1{font-size:clamp(30px,8vw,55px);text-shadow:0 0 18px red}
+p{font-size:20px;line-height:2;color:#ddd}
+.warning{font-size:20px;line-height:2}
+.terminal{margin-top:25px;text-align:left;direction:ltr;background:#000;border-radius:10px;padding:16px;color:#ff5555;font:14px/1.8 Consolas,monospace;min-height:130px}
+#reveal{display:none;color:white}.green{color:#5cff8d}
+button{padding:12px 22px;border:0;border-radius:9px;background:#25c96b;font-weight:bold;font-size:17px}
+</style>
+</head>
+<body>
+<section class="box" id="warning">
+<div class="icon">⚠️</div>
+<h1>هشدار امنیتی</h1>
+<div class="warning">اتصال مشکوک شناسایی شد.<br><b>شما در حال هک شدن هستید!</b></div>
+<div class="terminal" id="terminal"></div>
+</section>
+
+<section class="box" id="reveal">
+<div class="icon">😂</div>
+<h2 class="green">شوخی کردم!</h2>
+<p>هیچ هکی انجام نشده و هیچ اطلاعاتی از دستگاه شما گرفته نشده.<br>فقط یک صفحه‌ی شوخی بود 😄</p>
+<button onclick="location.reload()">دوباره ببین</button>
+</section>
+
+<script>
+const lines=[
+"[SYSTEM] scanning connection...",
+"[WARN] unusual activity detected",
+"[SCAN] checking device...",
+"[SCAN] checking network...",
+"[ALERT] suspicious activity found",
+"[SYSTEM] displaying security warning..."
+];
+let i=0;
+function next(){
+ const box=document.getElementById("terminal");
+ if(i<lines.length){
+   box.innerHTML+=lines[i]+"<br>";
+   i++;
+   setTimeout(next,550);
+ }else{
+   setTimeout(()=>{
+     document.getElementById("warning").style.display="none";
+     document.getElementById("reveal").style.display="block";
+   },1800);
+ }
+}
+next();
+</script>
+</body>
+</html>
